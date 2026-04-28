@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: automarket
+spec:
+  replicas: 1
+  serviceName: "mysql-svc"
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql-automarket
+          image: mysql:8.4
+          ports:
+            - containerPort: 3306
+          
+          # Переменные из Secret
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: automarket-mysql-secret    # имя нашего Secret
+                  key: MYSQL_USER
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: automarket-mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: automarket-mysql-secret
+                  key: MYSQL_DATABASE
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: automarket-mysql-secret
+                  key: MYSQL_PASSWORD
+          
+          # Ресурсы
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          
+          # Liveness probe — перезапустить если завис
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -uautomarket_user -p$MYSQL_ROOT_PASSWORD -h localhost
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          
+          # Readiness probe — убрать из балансировки если не готов
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -uautomarket_user -p$MYSQL_ROOT_PASSWORD -h localhost
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 6
+          
+          # Подключение volume
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+      
+      # Объявление volume
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc    # имя нашего PVC
