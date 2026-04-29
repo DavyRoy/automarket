@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: automarket
+data:
+  MYSQL_DATABASE: "automarket_db"
+  MYSQL_USER: "automarket_user"
+  MYSQL_HOST: "mysql-svc"
+  MYSQL_PORT: "3306"
+  POSTGRES_DB: "automarket_db"
+  POSTGRES_USER: "automarket_user"
+  POSTGRES_HOST: "postgres-svc"
+  POSTGRES_PORT: "5432"
