@@ -12,3 +12,5 @@ data:
   POSTGRES_USER: "automarket_user"
   POSTGRES_HOST: "postgres-svc"
   POSTGRES_PORT: "5432"
+  REDIS_HOST: "redis-svc"
+  REDIS_PORT: "6379"
