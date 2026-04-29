@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: automarket-backend:v2
+          image: automarket-backend:v5
           imagePullPolicy: Never
 
           ports:
