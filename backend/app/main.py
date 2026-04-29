@@ -6,11 +6,11 @@ app = Flask(__name__)
 
 def get_db():
     return psycopg2.connect(
-        host=os.environ.get("DB_HOST", "postgresql"),
-        port=os.environ.get("DB_PORT", "5432"),
-        database=os.environ.get("DB_NAME", "automarket_db"),
-        user=os.environ.get("DB_USER", "automarket_user"),
-        password=os.environ.get("DB_PASSWORD", "")
+        host=os.environ.get("POSTGRES_HOST", "postgres-svc"),
+        port=os.environ.get("POSTGRES_PORT", "5432"),
+        database=os.environ.get("POSTGRES_DB", "automarket_db"),
+        user=os.environ.get("POSTGRES_USER", "automarket_user"),
+        password=os.environ.get("POSTGRES_PASSWORD", "")
     )
 
 @app.route("/health")
